@@ -1,16 +1,7 @@
-# blockchainvoting
+# Blockchain Voting Decenteralized System  
+## Appendix
 
-A new Flutter project.
 
-## Getting Started
+Blockchain voting refers to a voting system where the vote casting and counting processes are secured using blockchain technology. This creates a transparent, secure, and tamper-proof record of the votes cast, reducing the possibility of fraud and increasing trust in the election process. Blockchain voting can also increase accessibility by enabling remote voting and reducing the cost of running elections.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The technology allows for increased transparency, security, and accuracy in the voting process, and helps prevent tampering or manipulation of the vote results. The decentralized and transparent nature of blockchain makes it difficult for anyone to tamper with the data, ensuring fair and secure elections.

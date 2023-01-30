@@ -1,115 +1,79 @@
+import 'package:e_vote/features/auth/data/user_repository.dart';
+import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'features/auth/presentation/bloc/auth_bloc/auth_states.dart';
+import 'features/auth/presentation/screens/Login_Screen.dart';
+import 'home_screen.dart';
+import 'features/auth/presentation/screens/splash_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(HomePage());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+class HomePage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+  _HomePageState createState() => _HomePageState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class _HomePageState extends State<HomePage> {
+  final UserRepository _userRepository = UserRepository();
+  AuthBloc _authBloc;
+  //An instance of user_Repository and AuthBloc is created
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  void initState() {
+    super.initState();
+    _authBloc = AuthBloc(repository: _userRepository);
+    _authBloc.add(AppStarted());
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+    // ignore: always_specify_types
+    return BlocProvider(
+      create: (BuildContext context) => _authBloc,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.from(
+            textTheme:
+                GoogleFonts.montserratTextTheme(Theme.of(context).textTheme),
+            colorScheme: ColorScheme(
+                primary: Color(0xFFf4511e),
+                primaryVariant: Color(0xffb91400),
+                secondary: Color(0xFF616161),
+                secondaryVariant: Color(0xFF373737),
+                surface: Color(0xFFF2F2F2),
+                background: Color(0xFFF2F2F2),
+                error: Color(0xffad1457),
+                onPrimary: Colors.black54,
+                onSecondary: Colors.black87,
+                onSurface: Colors.black54,
+                onBackground: Colors.black87,
+                onError: Colors.black87,
+                brightness: Brightness.light)),
+        home: BlocBuilder<AuthBloc, AuthState>(
+            bloc: _authBloc,
+            builder: (BuildContext context, AuthState state) {
+              if (state is AppStarted) return SplashScreen();
+              if (state is Authenticated)
+                return HomeScreen(
+                  userRepository: _userRepository,
+                );
+              if (state is Unauthenticated)
+                return LoginScreen(userRepository: _userRepository);
+              return Container();
+            }),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  @override
+  void dispose() {
+    _authBloc.close();
+    super.dispose();
   }
 }

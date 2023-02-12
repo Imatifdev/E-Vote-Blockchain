@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, prefer_const_constructors
+
 import 'package:e_vote/features/auth/data/user_repository.dart';
 import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
